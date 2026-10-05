@@ -168,7 +168,8 @@ const esc = s => String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
 
 async function load() {
   try {
-    const res = await fetch(API_URL + '?t=' + Date.now());
+   const PROXY = 'https://api.allorigins.win/raw?url=';
+const res = await fetch(PROXY + encodeURIComponent(API_URL + '?t=' + Date.now()));
     DATA = await res.json();
     render();
   } catch(e) {
