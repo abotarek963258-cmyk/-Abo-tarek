@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>لوحة تحكم أبو طارق</title>
+<link rel="icon" href="./assets/logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { theme: { extend: { colors: { ink:'#1c1c1c', ink2:'#2a2a2a', gold:'#c9a961', goldDark:'#a8894c', cream:'#faf7f2', creamDark:'#f0ebe0' }, fontFamily: { sans:['Tajawal','Cairo','sans-serif'] } } } }
+</script>
+<style>
+  body { font-family: 'Tajawal','Cairo',sans-serif; background: #faf7f2; }
+  .gold-gradient { background: linear-gradient(135deg,#c9a961,#d4b878,#a8894c); }
+</style>
+</head>
+<body class="min-h-screen">
+
+<div id="loadingScreen" class="fixed inset-0 bg-ink flex items-center justify-center z-50">
+  <div class="text-cream text-center">
+    <div class="w-16 h-16 border-4 border-gold/30 border-t-gold rounded-full animate-spin mx-auto mb-4"></div>
+    <p class="font-bold">جاري التحميل...</p>
+  </div>
+</div>
+
+<header class="bg-ink text-cream sticky top-0 z-40 shadow-lg">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-4 flex-wrap">
+    <div class="flex items-center gap-3">
+      <img src="./assets/logo.png" alt="" class="w-10 h-10 object-contain bg-cream rounded-lg p-1" onerror="this.style.display='none'">
+      <div>
+        <div class="font-black">لوحة تحكم أبو طارق</div>
+        <div class="text-[10px] text-gold" id="syncStatus">متزامن</div>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <a href="./" target="_blank" class="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-bold transition">🌐 الموقع</a>
+      <button onclick="saveAll()" id="saveBtn" class="gold-gradient text-ink px-4 py-2 rounded-lg text-sm font-black hover:shadow-xl transition">💾 حفظ</button>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-7xl mx-auto p-4">
+
+  <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
+    <button class="tab-btn active px-5 py-2 rounded-lg font-bold text-sm bg-ink text-cream" data-tab="products">🛍️ المنتجات</button>
+    <button class="tab-btn px-5 py-2 rounded-lg font-bold text-sm bg-white text-ink border border-ink/10" data-tab="categories">🗂️ الأقسام</button>
+    <button class="tab-btn px-5 py-2 rounded-lg font-bold text-sm bg-white text-ink border border-ink/10" data-tab="settings">⚙️ الإعدادات</button>
+  </div>
+
+  <section id="tab-products" class="tab-content">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-2xl font-black text-ink">المنتجات (<span id="productsCount">0</span>)</h2>
+      <button onclick="addProduct()" class="gold-gradient text-ink px-4 py-2 rounded-lg font-black text-sm">➕ إضافة منتج</button>
+    </div>
+    <div id="productsList" class="grid gap-3"></div>
+  </section>
+
+  <section id="tab-categories" class="tab-content hidden">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-2xl font-black text-ink">الأقسام</h2>
+      <button onclick="addCategory()" class="gold-gradient text-ink px-4 py-2 rounded-lg font-black text-sm">➕ إضافة قسم</button>
+    </div>
+    <div id="categoriesList" class="grid gap-3"></div>
+  </section>
+
+  <section id="tab-settings" class="tab-content hidden">
+    <h2 class="text-2xl font-black text-ink mb-4">الإعدادات</h2>
+    <div id="settingsForm" class="bg-white rounded-xl p-6 grid md:grid-cols-2 gap-4"></div>
+  </section>
+
+</main>
+
+<div id="modal" class="fixed inset-0 bg-ink/70 hidden items-center justify-center z-50 p-4 overflow-y-auto">
+  <div class="bg-white rounded-2xl w-full max-w-2xl my-8">
+    <div class="p-5 border-b flex items-center justify-between">
+      <h3 id="modalTitle" class="text-xl font-black text-ink"></h3>
+      <button onclick="closeModal()" class="w-10 h-10 bg-creamDark rounded-lg text-xl">×</button>
+    </div>
+    <div id="modalBody" class="p-5 max-h-[70vh] overflow-y-auto"></div>
+    <div class="p-5 border-t flex gap-3 bg-cream rounded-b-2xl">
+      <button onclick="saveModal()" class="gold-gradient text-ink px-6 py-3 rounded-lg font-black">💾 حفظ</button>
+      <button onclick="closeModal()" class="bg-white border-2 border-ink/10 px-6 py-3 rounded-lg font-black">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="fixed bottom-6 right-6 hidden z-50"></div>
+
+<script>
+const API_URL = 'https://script.google.com/macros/s/AKfycbwQQ2zalljDY0ZrXyz_oxNEHJsvd-e1cB_7_NbeEZ0gfHHF6YPme6yrKKnhpBCrFpGU/exec';
+let DATA = { products: [], categories: [], settings: {} };
+let modalType = null, modalIndex = -1;
+const $ = s => document.querySelector(s);
+const esc = s => String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+function toast(msg, type='success') {
+  const t = $('#toast');
+  t.className = 'fixed bottom-6 right-6 px-6 py-4 rounded-xl text-white font-bold shadow-2xl z-50 ' + (type==='success'?'bg-green-500':'bg-red-500');
+  t.textContent = msg;
+  t.classList.remove('hidden');
+  setTimeout(() => t.classList.add('hidden'), 2500);
+}
+
+async function load() {
+  try {
+    const res = await fetch(API_URL + '?t=' + Date.now());
+    DATA = await res.json();
+    render();
+    $('#loadingScreen').classList.add('hidden');
+  } catch(e) {
+    toast('تعذر تحميل البيانات', 'error');
+    $('#loadingScreen').classList.add('hidden');
+  }
+}
+
+function render() { renderProducts(); renderCategories(); renderSettings(); }
+
+function renderProducts() {
+  const list = $('#productsList');
+  $('#productsCount').textContent = DATA.products.length;
+  if (!DATA.products.length) { list.innerHTML = '<div class="bg-white rounded-xl p-10 text-center text-ink/40 font-bold">لا توجد منتجات. اضغط "إضافة منتج" للبدء</div>'; return; }
+  list.innerHTML = DATA.products.map((p, i) => `
+    <div class="bg-white rounded-xl p-4 flex items-center gap-4 shadow-sm flex-wrap">
+      <img src="${esc(p.image || './assets/logo.png')}" class="w-16 h-16 rounded-lg object-cover bg-creamDark" onerror="this.src='./assets/logo.png'">
+      <div class="flex-1 min-w-0">
+        <div class="font-black text-ink truncate">${esc(p.name)}</div>
+        <div class="text-xs text-ink/60 mt-1">
+          <span class="bg-creamDark px-2 py-0.5 rounded">${esc(p.category || 'بدون قسم')}</span>
+          ${p.price ? `<span class="bg-gold/20 text-goldDark px-2 py-0.5 rounded mr-1">${esc(p.price)} ج.م</span>` : ''}
+          ${(p.isOffer===true||p.isOffer==='TRUE') ? '<span class="bg-red-100 text-red-600 px-2 py-0.5 rounded mr-1">🔥 عرض</span>' : ''}
+        </div>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="editProduct(${i})" class="w-10 h-10 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-500 hover:text-white transition">✏️</button>
+        <button onclick="deleteProduct(${i})" class="w-10 h-10 bg-red-100 text-red-600 rounded-lg hover:bg-red-500 hover:text-white transition">🗑️</button>
+      </div>
+    </div>`).join('');
+}
+
+function renderCategories() {
+  const list = $('#categoriesList');
+  if (!DATA.categories.length) { list.innerHTML = '<div class="bg-white rounded-xl p-10 text-center text-ink/40 font-bold">لا توجد أقسام</div>'; return; }
+  list.innerHTML = DATA.categories.map((c, i) => `
+    <div class="bg-white rounded-xl p-4 flex items-center gap-4 shadow-sm">
+      <div class="w-14 h-14 bg-creamDark rounded-lg flex items-center justify-center text-3xl">${esc(c.icon || '📦')}</div>
+      <div class="flex-1">
+        <div class="font-black text-ink">${esc(c.name)}</div>
+        <div class="text-xs text-ink/60">ترتيب: ${esc(c.sortOrder || 0)}</div>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="editCategory(${i})" class="w-10 h-10 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-500 hover:text-white transition">✏️</button>
+        <button onclick="deleteCategory(${i})" class="w-10 h-10 bg-red-100 text-red-600 rounded-lg hover:bg-red-500 hover:text-white transition">🗑️</button>
+      </div>
+    </div>`).join('');
+}
+
+function renderSettings() {
+  const s = DATA.settings;
+  const fields = [
+    ['siteName','اسم الموقع'], ['tagline','الشعار الفرعي'], ['logo','رابط اللوجو'],
+    ['heroTitle','عنوان البانر'], ['heroSubtitle','وصف البانر'], ['heroButtonText','نص زرار البانر'],
+    ['heroImage','رابط صورة البانر'], ['whatsapp','رقم واتساب'], ['phone','رقم الهاتف'], ['address','العنوان']
+  ];
+  $('#settingsForm').innerHTML = fields.map(([k,label]) => `
+    <div>
+      <label class="block text-sm font-bold text-ink/70 mb-1">${label}</label>
+      <input data-setting="${k}" value="${esc(s[k] || '')}" class="w-full px-4 py-3 border-2 border-ink/10 rounded-lg focus:border-gold outline-none">
+    </div>`).join('');
+}
+
+function addProduct() { modalType='product'; modalIndex=-1; openProductModal({}); }
+function editProduct(i) { modalType='product'; modalIndex=i; openProductModal(DATA.products[i]); }
+
+function openProductModal(p) {
+  $('#modalTitle').textContent = modalIndex >= 0 ? 'تعديل منتج' : 'إضافة منتج';
+  const cats = DATA.categories.map(c => c.name);
+  $('#modalBody').innerHTML = `
+    <div class="grid md:grid-cols-2 gap-4">
+      <div class="md:col-span-2">
+        <label class="block text-sm font-bold mb-1">اسم المنتج *</label>
+        <input id="m-name" value="${esc(p.name || '')}" class="w-full px-4 py-3 border-2 border-ink/10 rounded-lg focus:border-gold outline-none">
+      </div>
+      <div>
+        <label class="block text-sm font-bold mb-1">القسم</label>
+        <select id="m-category" class="w-full px-4 py-3 border-2 border-ink/10 rounded-lg focus:border-gold outline-none">
+          <option value="">اختر القسم</option>
+          ${cats.map(c => `<option value="${esc(c)}" ${c === p.category ? 'selected' : ''}>${esc(c)}</option>`).join('')}
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-bold mb-1">الترتيب</label>
+        <input id="m-sortOrder" type="number" value="${esc(p.sortOrder || 0)}" class="w-full px-4 py-3 border-2 border-ink/10 rounded-lg focus:border-gold outline-none">
+      </div>
+      <div>
+        <label class="block text-sm font-bold mb-1">السعر</label>
+        <input id="m-price" value="${esc(p.price || '')}" class="w-full px-4 py-3 border-2 border-ink/10 rounded-lg focus:border-gold outline-none">
+      </div>
+      <div>
+        <label class="block text-sm font-bold mb-1">السعر القديم</label>
+        <input id="m-oldPrice" value="${esc(p.oldPrice || '')}" class="w-full px-4 py-3 border-2 border-ink/10 rounded-lg focus:border-gold outline-none">
+      </div>
+      <div class="md:col-span-2">
+        <label class="block text-sm font-bold mb-1">رابط الصورة الرئيسية</label>
+        <input id="m-image" value="${esc(p.image || '')}" placeholder="https://..." class="w-full px-4 py-3 border-2 border-ink/10 rounded-lg focus:border-gold outline-none">
+      </div>
+      <div class="md:col-span-2">
+        <label class="block text-sm font-bold mb-1">الوصف</label>
+        <textarea id="m-description" rows="3" class="w-full px-4 py-3 border-2 border-ink/10 rounded-lg focus:border-gold outline-none">${esc(p.description || '')}</textarea>
+      </div>
+      <label class="flex items-center gap-2 p-3 border-2 border-ink/10 rounded-lg cursor-pointer">
+        <input type="checkbox" id="m-active" ${(p.active===false||p.active==='FALSE')?'':'checked'}>
+        <span class="font-bold text-sm">نشط</span>
+      </label>
+      <label class="flex items-center gap-2 p-3 border-2 border-ink/10 rounded-lg cursor-pointer">
+        <input type="checkbox" id="m-isOffer" ${(p.isOffer===true||p.isOffer==='TRUE')?'checked':''}>
+        <span class="font-bold text-sm">🔥 عرض خاص</span>
+      </label>
+    </div>`;
+  showModal();
+}
+
+function addCategory() { modalType='category'; modalIndex=-1; openCategoryModal({}); }
+function editCategory(i) { modalType='category'; modalIndex=i; openCategoryModal(DATA.categories[i]); }
+
+function openCategoryModal(c) {
+  $('#modalTitle').textContent = modalIndex >= 0 ? 'تعديل قسم' : 'إضافة قسم';
+  $('#modalBody').innerHTML = `
+    <div class="grid gap-4">
+      <div>
+        <label class="block text-sm font-bold mb-1">اسم القسم *</label>
+        <input id="c-name" value="${esc(c.name || '')}" class="w-full px-4 py-3 border-2 border-ink/10 rounded-lg focus:border-gold outline-none">
+      </div>
+      <div>
+        <label class="block text-sm font-bold mb-1">الأيقونة (إيموجي)</label>
+        <input id="c-icon" value="${esc(c.icon || '📦')}" class="w-full px-4 py-3 border-2 border-ink/10 rounded-lg focus:border-gold outline-none text-2xl">
+      </div>
+      <div>
+        <label class="block text-sm font-bold mb-1">الترتيب</label>
+        <input id="c-sortOrder" type="number" value="${esc(c.sortOrder || 0)}" class="w-full px-4 py-3 border-2 border-ink/10 rounded-lg focus:border-gold outline-none">
+      </div>
+    </div>`;
+  showModal();
+}
+
+function showModal() { $('#modal').classList.remove('hidden'); $('#modal').classList.add('flex'); }
+function closeModal() { $('#modal').classList.add('hidden'); $('#modal').classList.remove('flex'); }
+
+function saveModal() {
+  if (modalType === 'product') {
+    const name = $('#m-name').value.trim();
+    if (!name) return toast('اكتب اسم المنتج', 'error');
+    const product = {
+      id: modalIndex >= 0 ? DATA.products[modalIndex].id : 'p' + Date.now(),
+      name,
+      category: $('#m-category').value,
+      price: $('#m-price').value,
+      oldPrice: $('#m-oldPrice').value,
+      image: $('#m-image').value,
+      images: '',
+      description: $('#m-description').value,
+      active: $('#m-active').checked,
+      showHome: false,
+      isOffer: $('#m-isOffer').checked,
+      sortOrder: Number($('#m-sortOrder').value) || 0
+    };
+    if (modalIndex >= 0) DATA.products[modalIndex] = product;
+    else DATA.products.push(product);
+    renderProducts();
+  } else if (modalType === 'category') {
+    const name = $('#c-name').value.trim();
+    if (!name) return toast('اكتب اسم القسم', 'error');
+    const category = {
+      id: modalIndex >= 0 ? DATA.categories[modalIndex].id : 'c' + Date.now(),
+      name,
+      icon: $('#c-icon').value,
+      sortOrder: Number($('#c-sortOrder').value) || 0,
+      active: true
+    };
+    if (modalIndex >= 0) DATA.categories[modalIndex] = category;
+    else DATA.categories.push(category);
+    renderCategories();
+  }
+  closeModal();
+  toast('تم الحفظ مؤقتاً. اضغط "حفظ" فوق عشان يترفع على الشيت');
+}
+
+function deleteProduct(i) {
+  if (!confirm('حذف "' + DATA.products[i].name + '"؟')) return;
+  DATA.products.splice(i, 1);
+  renderProducts();
+  toast('تم الحذف. اضغط "حفظ" فوق');
+}
+
+function deleteCategory(i) {
+  if (!confirm('حذف "' + DATA.categories[i].name + '"؟')) return;
+  DATA.categories.splice(i, 1);
+  renderCategories();
+  toast('تم الحذف. اضغط "حفظ" فوق');
+}
+
+async function saveAll() {
+  document.querySelectorAll('[data-setting]').forEach(input => {
+    DATA.settings[input.dataset.setting] = input.value;
+  });
+  $('#saveBtn').disabled = true;
+  $('#saveBtn').textContent = '⏳ جاري الحفظ...';
+  $('#syncStatus').textContent = 'جاري الحفظ...';
+  try {
+    await fetch(API_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'save', products: DATA.products, categories: DATA.categories, settings: DATA.settings })
+    });
+    toast('✓ تم الحفظ في الشيت');
+    $('#syncStatus').textContent = 'تم الحفظ ✓';
+    setTimeout(() => $('#syncStatus').textContent = 'متزامن', 3000);
+  } catch(e) {
+    toast('فشل الحفظ', 'error');
+    $('#syncStatus').textContent = 'خطأ في الحفظ';
+  } finally {
+    $('#saveBtn').disabled = false;
+    $('#saveBtn').textContent = '💾 حفظ';
+  }
+}
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      b.classList.remove('active','bg-ink','text-cream');
+      b.classList.add('bg-white','text-ink');
+    });
+    btn.classList.add('active','bg-ink','text-cream');
+    btn.classList.remove('bg-white','text-ink');
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+    document.getElementById('tab-' + btn.dataset.tab).classList.remove('hidden');
+  });
+});
+
+load();
+</script>
+</body>
+</html>
