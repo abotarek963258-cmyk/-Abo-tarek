@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>أبو طارق | كل اللي بيتك محتاجه في مكان واحد</title>
+<link rel="icon" href="./assets/logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        ink: '#1c1c1c', ink2: '#2a2a2a',
+        gold: '#c9a961', goldDark: '#a8894c',
+        cream: '#faf7f2', creamDark: '#f0ebe0'
+      },
+      fontFamily: { sans: ['Tajawal','Cairo','sans-serif'] }
+    }
+  }
+}
+</script>
+<style>
+  body { font-family: 'Tajawal','Cairo',sans-serif; background: #faf7f2; }
+  .gold-gradient { background: linear-gradient(135deg,#c9a961 0%,#d4b878 50%,#a8894c 100%); }
+  .gold-text { background: linear-gradient(135deg,#c9a961,#d4b878); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .product-img { transition: transform .5s ease; }
+  .product-card:hover .product-img { transform: scale(1.05); }
+</style>
+</head>
+<body>
+
+<div class="bg-ink text-cream text-xs md:text-sm py-2 px-4 text-center border-b border-gold/20">
+  <span id="topStrip">شحن مجاني للطلبات فوق 500 ج.م</span>
+</div>
+
+<header class="bg-ink text-cream sticky top-0 z-50 shadow-lg">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
+    <a href="#" class="flex items-center gap-3 shrink-0">
+      <img id="headerLogo" src="./assets/logo.png" alt="أبو طارق" class="w-12 h-12 object-contain bg-cream rounded-lg p-1">
+      <div class="hidden sm:block">
+        <div class="font-black text-lg leading-tight" id="headerName">أبو طارق</div>
+        <div class="text-[10px] text-gold tracking-wider" id="headerTagline"></div>
+      </div>
+    </a>
+    <nav id="mainNav" class="hidden lg:flex items-center gap-1 text-sm font-semibold"></nav>
+    <div class="flex items-center gap-2">
+      <button onclick="document.getElementById('searchBox').classList.toggle('hidden')" class="hover:text-gold transition p-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      </button>
+      <a id="whatsappLink" href="#" target="_blank" class="hover:text-gold transition p-2">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
+      </a>
+      <button id="mobileMenuBtn" class="lg:hidden p-2">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+  </div>
+  <div id="searchBox" class="hidden border-t border-gold/20 px-4 py-3">
+    <div class="max-w-3xl mx-auto">
+      <input id="searchInput" type="search" placeholder="ابحث عن منتج..." class="w-full bg-ink2 text-cream px-4 py-3 rounded-lg outline-none border border-gold/20 focus:border-gold">
+    </div>
+  </div>
+  <div id="mobileMenu" class="hidden lg:hidden border-t border-gold/20 px-4 py-3">
+    <nav id="mobileNav" class="flex flex-col gap-1 text-sm font-semibold"></nav>
+  </div>
+</header>
+
+<section class="relative bg-ink text-cream overflow-hidden">
+  <div class="max-w-7xl mx-auto grid lg:grid-cols-2 items-center gap-8 px-4 py-12 lg:py-20">
+    <div class="order-2 lg:order-1">
+      <h1 id="heroTitle" class="text-4xl md:text-5xl lg:text-6xl font-black leading-tight mb-4"></h1>
+      <p id="heroSubtitle" class="text-lg text-cream/80 mb-8 leading-relaxed max-w-xl"></p>
+      <a id="heroButton" href="#products" class="inline-flex items-center gap-2 gold-gradient text-ink font-black px-8 py-4 rounded-lg hover:shadow-2xl hover:scale-105 transition"></a>
+    </div>
+    <div class="order-1 lg:order-2 relative">
+      <img id="heroImage" src="" alt="" class="w-full h-64 md:h-96 lg:h-[500px] object-cover rounded-2xl shadow-2xl border-4 border-gold/30" onerror="this.style.display='none'">
+    </div>
+  </div>
+</section>
+
+<section class="py-16 bg-cream">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="text-center mb-10">
+      <h2 class="text-3xl md:text-4xl font-black text-ink mb-2">أقسام مميزة</h2>
+      <div class="w-24 h-1 gold-gradient mx-auto rounded-full"></div>
+    </div>
+    <div id="categoriesGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4"></div>
+  </div>
+</section>
+
+<section id="offersSection" class="py-16 bg-white hidden">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="mb-10">
+      <h2 class="text-3xl md:text-4xl font-black text-ink mb-2">🔥 العروض الخاصة</h2>
+      <div class="w-24 h-1 gold-gradient rounded-full"></div>
+    </div>
+    <div id="offersGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+  </div>
+</section>
+
+<section id="products" class="py-16 bg-cream">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="text-center mb-10">
+      <h2 class="text-3xl md:text-4xl font-black text-ink mb-2">كل المنتجات</h2>
+      <div class="w-24 h-1 gold-gradient mx-auto rounded-full"></div>
+    </div>
+    <div id="filterBar" class="flex flex-wrap justify-center gap-2 mb-8"></div>
+    <div id="productsGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+    <div id="emptyState" class="hidden text-center py-20 text-ink/40">
+      <div class="text-6xl mb-4">📦</div>
+      <p class="text-lg font-bold">لا توجد منتجات</p>
+    </div>
+  </div>
+</section>
+
+<section class="py-16 bg-ink text-cream">
+  <div class="max-w-4xl mx-auto px-4 text-center">
+    <h2 class="text-3xl md:text-4xl font-black mb-4 gold-text">عن أبو طارق</h2>
+    <p class="text-lg text-cream/80 leading-relaxed">منذ سنوات ونحن نقدم أفضل الأدوات المنزلية والمطبخية بأسعار تنافسية. هدفنا إن كل بيت مصري يلاقي اللي محتاجه في مكان واحد.</p>
+  </div>
+</section>
+
+<section class="py-16 bg-creamDark">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="text-center mb-10">
+      <h2 class="text-3xl md:text-4xl font-black text-ink mb-2">تواصل معنا</h2>
+      <div class="w-24 h-1 gold-gradient mx-auto rounded-full"></div>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6">
+      <a id="contactWhatsapp" href="#" target="_blank" class="bg-white p-6 rounded-xl text-center hover:shadow-xl transition border-t-4 border-gold">
+        <div class="text-3xl mb-2">💬</div>
+        <div class="font-black text-ink mb-1">واتساب</div>
+        <div id="contactWhatsappText" class="text-sm text-ink/60"></div>
+      </a>
+      <div class="bg-white p-6 rounded-xl text-center border-t-4 border-gold">
+        <div class="text-3xl mb-2">📞</div>
+        <div class="font-black text-ink mb-1">اتصل بينا</div>
+        <div id="contactPhoneText" class="text-sm text-ink/60"></div>
+      </div>
+      <div class="bg-white p-6 rounded-xl text-center border-t-4 border-gold">
+        <div class="text-3xl mb-2">📍</div>
+        <div class="font-black text-ink mb-1">العنوان</div>
+        <div id="contactAddressText" class="text-sm text-ink/60"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="bg-ink text-cream py-10 border-t border-gold/20">
+  <div class="max-w-7xl mx-auto px-4 text-center">
+    <img id="footerLogo" src="./assets/logo.png" alt="أبو طارق" class="w-16 h-16 object-contain mx-auto mb-4 bg-cream rounded-lg p-1">
+    <div class="font-black text-xl mb-1" id="footerName">أبو طارق</div>
+    <div class="text-gold text-sm mb-4" id="footerTagline"></div>
+    <div class="text-cream/50 text-xs">© <span id="year"></span> أبو طارق. جميع الحقوق محفوظة.</div>
+  </div>
+</footer>
+
+<a id="floatingWhatsapp" href="#" target="_blank" class="fixed bottom-6 left-6 bg-green-500 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition z-40">
+  <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
+</a>
+
+<script>
+const API_URL = 'https://script.google.com/macros/s/AKfycbwQQ2zalljDY0ZrXyz_oxNEHJsvd-e1cB_7_NbeEZ0gfHHF6YPme6yrKKnhpBCrFpGU/exec';
+let DATA = { products: [], categories: [], settings: {} };
+const esc = s => String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+async function load() {
+  try {
+    const res = await fetch(API_URL + '?t=' + Date.now());
+    DATA = await res.json();
+    render();
+  } catch(e) {
+    console.error(e);
+    document.getElementById('productsGrid').innerHTML = '<div class="col-span-full text-center py-10 text-red-500 font-bold">تعذر تحميل البيانات، حاول تحديث الصفحة</div>';
+  }
+}
+
+function render() {
+  const s = DATA.settings || {};
+  const cats = (DATA.categories || []).filter(c => c.active !== false && c.active !== 'FALSE');
+  const prods = (DATA.products || []).filter(p => p.active !== false && p.active !== 'FALSE');
+
+  document.title = (s.siteName || 'أبو طارق') + ' | ' + (s.tagline || '');
+  document.getElementById('headerLogo').src = s.logo || './assets/logo.png';
+  document.getElementById('footerLogo').src = s.logo || './assets/logo.png';
+  document.getElementById('headerName').textContent = s.siteName || 'أبو طارق';
+  document.getElementById('footerName').textContent = s.siteName || 'أبو طارق';
+  document.getElementById('headerTagline').textContent = s.tagline || '';
+  document.getElementById('footerTagline').textContent = s.tagline || '';
+  document.getElementById('year').textContent = new Date().getFullYear();
+  document.getElementById('topStrip').textContent = 'شحن مجاني للطلبات فوق 500 ج.م — اتصل بينا: ' + (s.phone || '');
+
+  document.getElementById('heroTitle').textContent = s.heroTitle || '';
+  document.getElementById('heroSubtitle').textContent = s.heroSubtitle || '';
+  document.getElementById('heroButton').textContent = s.heroButtonText || 'تسوق الآن';
+  if (s.heroImage) document.getElementById('heroImage').src = s.heroImage;
+
+  const wa = String(s.whatsapp || '').replace(/[^\d]/g,'');
+  const waLink = wa ? 'https://wa.me/' + wa : '#';
+  ['whatsappLink','floatingWhatsapp','contactWhatsapp'].forEach(id => document.getElementById(id).href = waLink);
+  document.getElementById('contactWhatsappText').textContent = wa ? '+' + wa : 'غير متاح';
+  document.getElementById('contactPhoneText').textContent = s.phone || 'غير متاح';
+  document.getElementById('contactAddressText').textContent = s.address || 'غير متاح';
+
+  const navItems = [{ name:'الرئيسية', link:'#' }, ...cats.map(c => ({ name:c.name, link:'#cat-'+c.id }))];
+  document.getElementById('mainNav').innerHTML = navItems.map(n => `<a href="${esc(n.link)}" class="px-3 py-2 rounded hover:text-gold hover:bg-white/5 transition">${esc(n.name)}</a>`).join('');
+  document.getElementById('mobileNav').innerHTML = navItems.map(n => `<a href="${esc(n.link)}" class="px-3 py-2 rounded hover:text-gold hover:bg-white/5 transition">${esc(n.name)}</a>`).join('');
+
+  document.getElementById('categoriesGrid').innerHTML = cats.map(c =>
+    `<a href="#products" data-cat="${esc(c.name)}" class="cat-link bg-white p-4 rounded-xl text-center hover:shadow-lg hover:-translate-y-1 transition border-b-4 border-gold/0 hover:border-gold">
+      <div class="text-4xl mb-2">${esc(c.icon || '📦')}</div>
+      <div class="font-bold text-ink text-sm">${esc(c.name)}</div>
+    </a>`).join('');
+
+  const offers = prods.filter(p => p.isOffer === true || p.isOffer === 'TRUE');
+  if (offers.length) {
+    document.getElementById('offersSection').classList.remove('hidden');
+    document.getElementById('offersGrid').innerHTML = offers.map(productCard).join('');
+  }
+
+  document.getElementById('filterBar').innerHTML =
+    `<button class="filter-chip active px-4 py-2 rounded-full bg-ink text-cream font-bold text-sm" data-cat="">الكل</button>` +
+    cats.map(c => `<button class="filter-chip px-4 py-2 rounded-full bg-white text-ink font-bold text-sm border border-ink/10 hover:border-gold" data-cat="${esc(c.name)}">${esc(c.name)}</button>`).join('');
+
+  renderProducts(prods, '', '');
+
+  document.getElementById('searchInput').addEventListener('input', e => renderProducts(prods, e.target.value.trim().toLowerCase(), ''));
+
+  document.querySelectorAll('.filter-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-chip').forEach(b => { b.classList.remove('active','bg-ink','text-cream'); b.classList.add('bg-white','text-ink'); });
+      btn.classList.add('active','bg-ink','text-cream'); btn.classList.remove('bg-white','text-ink');
+      renderProducts(prods, '', btn.dataset.cat);
+    });
+  });
+
+  document.querySelectorAll('.cat-link').forEach(a => {
+    a.addEventListener('click', () => {
+      const cat = a.dataset.cat;
+      document.querySelectorAll('.filter-chip').forEach(b => {
+        b.classList.remove('active','bg-ink','text-cream'); b.classList.add('bg-white','text-ink');
+        if (b.dataset.cat === cat) { b.classList.add('active','bg-ink','text-cream'); b.classList.remove('bg-white','text-ink'); }
+      });
+      renderProducts(prods, '', cat);
+    });
+  });
+
+  document.getElementById('mobileMenuBtn').addEventListener('click', () => document.getElementById('mobileMenu').classList.toggle('hidden'));
+}
+
+function renderProducts(prods, query, cat) {
+  const filtered = prods.filter(p => {
+    if (cat && p.category !== cat) return false;
+    if (query && !((p.name||'') + ' ' + (p.description||'')).toLowerCase().includes(query)) return false;
+    return true;
+  });
+  const grid = document.getElementById('productsGrid');
+  const empty = document.getElementById('emptyState');
+  if (!filtered.length) { grid.innerHTML=''; empty.classList.remove('hidden'); }
+  else { empty.classList.add('hidden'); grid.innerHTML = filtered.map(productCard).join(''); }
+}
+
+function productCard(p) {
+  const wa = String(DATA.settings.whatsapp || '').replace(/[^\d]/g,'');
+  const hasOffer = (p.isOffer === true || p.isOffer === 'TRUE') && p.oldPrice;
+  return `
+    <a href="https://wa.me/${wa}?text=${encodeURIComponent('أريد الاستفسار عن: ' + p.name)}" target="_blank" class="product-card bg-white rounded-xl overflow-hidden shadow hover:shadow-2xl transition border border-ink/5">
+      <div class="relative aspect-square overflow-hidden bg-creamDark">
+        <img src="${esc(p.image || './assets/logo.png')}" alt="${esc(p.name)}" class="product-img w-full h-full object-cover" onerror="this.src='./assets/logo.png'">
+        ${hasOffer ? `<div class="absolute top-3 right-3 gold-gradient text-ink text-xs font-black px-3 py-1 rounded-full">🔥 خصم</div>` : ''}
+      </div>
+      <div class="p-4">
+        <div class="text-xs text-goldDark font-bold mb-1">${esc(p.category || '')}</div>
+        <h3 class="font-bold text-ink text-sm md:text-base mb-2 line-clamp-2 min-h-[2.5rem]">${esc(p.name)}</h3>
+        <div class="flex items-center gap-2 flex-wrap">
+          ${p.price ? `<span class="font-black text-ink text-lg">${esc(p.price)} ج.م</span>` : ''}
+          ${hasOffer ? `<span class="text-xs text-ink/40 line-through">${esc(p.oldPrice)} ج.م</span>` : ''}
+        </div>
+      </div>
+    </a>`;
+}
+
+load();
+</script>
+</body>
+</html>
